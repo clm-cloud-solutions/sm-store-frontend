@@ -1,6 +1,10 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
+# Next.js evaluates rewrites() at BUILD time (baked into routes-manifest.json),
+# so the backend URL must be present during `next build`, not at runtime.
+ARG BACKEND_URL=http://store-backend:3000
+ENV BACKEND_URL=$BACKEND_URL
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
